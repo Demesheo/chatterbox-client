@@ -12,13 +12,13 @@ var app = {
       app.addFriend();
     });
 
-    $( "#send .submit" ).submit(app.handleSubmit);
+    $('#send').submit(app.handleSubmit);
     
     $('#roomSelect').change(function(e){
       var selectedRoom = "." + e.target.value;
 
       $('#chats div').show(selectedRoom);
-      $("#chats div").not(selectedRoom).hide();
+      $('#chats div').not(selectedRoom).hide();
 
     });
 
@@ -30,8 +30,11 @@ var app = {
     return true;
 
   },
+
   send : function(message){
-    console.log("testing submit")
+
+    console.log("testing submit");
+
     $.ajax({
       url: 'https://api.parse.com/1/classes/chatterbox',
       type: 'POST',
@@ -39,28 +42,29 @@ var app = {
       contentType: 'application/json',
       success: function (data) {
         console.log('chatterbox: Message sent');
+
+        $('#send #message').val('');
       },
       error: function (data) {
-          // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
-          console.error('chatterbox: Failed to send message');
-        },
-
-
+        console.error('chatterbox: Failed to send message');
       }
-    )},
+    });
 
-    fetch : function(){ 
+  },
 
-      $('.spinner').show();
-      var that = this;
+  fetch : function(){ 
 
-      $.get('https://api.parse.com/1/classes/chatterbox', function( data ) {
+    $('.spinner').show();
+    var that = this;
 
-        $('.spinner').hide();
-        that.clearMessages();
+    $.get('https://api.parse.com/1/classes/chatterbox', function( data ) {
 
-        that.messages = that.messages.concat(data.results);
-        that.messages = _.uniq(that.messages, function(item){
+      $('.spinner').hide();
+      that.clearMessages();
+      that.clearRooms();
+
+      that.messages = that.messages.concat(data.results);
+      that.messages = _.uniq(that.messages, function(item){
         return item.objectId;
       })
 
@@ -68,7 +72,7 @@ var app = {
         return new Date(item.createdAt).getTime();
       }).reverse();
 
-      console.table(that.messages);
+      // console.table(that.messages);
 
       for(var i = 0; i < that.messages.length; i++){
         if(that.messages[i].roomname===undefined){
@@ -85,12 +89,13 @@ var app = {
       }
 
       //
-      console.table(data.result);
+
+      // console.table(data.result);
       for(var key in that.roomNames){
         var addedRoom = that.roomNames[key];
         that.addRoom(addedRoom);
       }
-    })
+    });
   },
 
   clearMessages : function(){$('#chats').html('');},
@@ -107,6 +112,8 @@ var app = {
 
   },
 
+  clearRooms : function(){$('#roomSelect').html('');},
+
   addRoom : function(roomname){
     var $newRoom = $('<option class="room" value="'+roomname+'">'+roomname+'</option>');
     $('#roomSelect').append($newRoom);
@@ -114,9 +121,20 @@ var app = {
 
   addFriend : function(){},
 
-  handleSubmit : function(){ 
-    console.log('handling submit');
+  handleSubmit : function(e){
+    e.preventDefault();
+    // console.log();
+    // console.log($( "#roomSelect option:selected" ).text());
+    var msg = {
+      username: $.getQueryParameters().username,
+      text: $('#send #message').val(),
+      roomname: $('#roomSelect').val()
+    };
+
+    console.log('handling submit :' + msg);
     //return true;
+
+    app.send(msg);
   }
 
 };
