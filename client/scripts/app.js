@@ -3,16 +3,18 @@
 
 var app = {
 
-
-
 	init : function(){
-		
+
+		this.roomNames = {};
+
 		$('a.username').click(function(){
 			app.addFriend();
 		});
 
 		$( "#send .submit" ).submit(app.handleSubmit);
 		
+		app.fetch();
+
 		return true;
 
 	},
@@ -34,9 +36,35 @@ var app = {
 
 		}
 		)},
-	fetch : function(){ $.get(undefined, function( data ) {
-		$( ".result" ).html( data );
-		alert( "Load was performed." );
+	fetch : function(){ 
+		var that = this;
+		$.get('https://api.parse.com/1/classes/chatterbox', function( data ) {
+		//( ".result" ).html( data );
+		console.log(data.result);	
+		for(var i = 0; i < data.results.length; i++){
+			if(data.results[i].roomname===undefined){
+				var roomname = "undefined";
+			} else if (data.results[i].roomname===null){
+				var roomname = "null";
+			}else if (data.results[i].roomname==="" || data.results[i].roomname===" "){
+				var roomname = "_";
+			}else {var roomname = data.results[i].roomname;}
+			that.roomNames[roomname] = roomname;
+			that.addMessage(data.results[i]);
+		}
+
+		//
+		console.log(data);
+		for(var key in that.roomNames){
+			var addedRoom = that.roomNames[key];
+			that.addRoom(addedRoom);
+		}
+
+
+
+
+
+
 	})
 },
 
@@ -63,4 +91,4 @@ handleSubmit : function(){
 
 };
 
-
+app.init();
