@@ -59,6 +59,10 @@ form input[type=text] {
     padding: 5px;
 }
 
+#chats div {
+    padding: 20px;
+}
+
 .chat {
     padding: 5px;
     margin-bottom: 5px;
@@ -81,4 +85,8 @@ form input[type=text] {
 
 .spinner img {
     padding: 10px;
+}
+
+.date {
+    font-size : .65em;
 }

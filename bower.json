@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "dependencies": {
     "jquery": "~2.0.3",
-    "underscore": "~1.8.3"
+    "underscore": "~1.8.3",
+    "momentjs": "~2.10.3"
   },
   "ignore": [
     "**/.*",
